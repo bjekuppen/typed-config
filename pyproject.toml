@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "typed_config"
+authors = [
+    {name = "Bart Kuppen", email = "bjekuppen@gmail.com"},
+]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "PyYAML"
+]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["typed_config*"] 
+
+[tool.setuptools.dynamic]
+version = {attr = "typed_config.VERSION"}
+
+[tool.mypy]
+python_executable = "/opt/devenv/bin/python"
+exclude = [
+    "test"
+]
+strict = true
