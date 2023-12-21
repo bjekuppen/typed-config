@@ -1,6 +1,6 @@
 from typed_config import BaseConfig
 
-{
+config = {
     "key1": 1,
     "key2": [
         1,

@@ -1,8 +1,7 @@
-from typing import Optional, Callable, Type, Any, TypeVar
+from typing import Any
 from .exceptions import RequiredError
+from .setting import Setting
 
-T = TypeVar('T')
-U = TypeVar('U')
 
 class BaseConfig():
     
@@ -32,14 +31,3 @@ class BaseConfig():
         if type(key) != str:
             raise TypeError("Only str supported")
         return self._config[key]
-    
-
-
-class Setting():
-    def __init__(self, datacast:Callable[[Any], Any]=str, required:bool=False): #type: ignore[assignment] #mypy doesn't like the str as default value, possible fix? 
-        self.datacast = datacast
-        self.required = required
-
-class TestConfig(BaseConfig):
-        key1 = Setting(str, required=True)
-        key2 = Setting(str)
