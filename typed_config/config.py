@@ -39,7 +39,7 @@ class BaseConfig():
                         self._config[variable_name].append(value.setting.config(item)) #type: ignore[operator]
 
     def __get_class_variables(self) -> dict[str, Any]:
-        def filter_items(key, value):
+        def filter_items(key:str, value:Any) -> bool:
             return isinstance(value, (Setting, SettingGroup, SettingList))
         return {key: value for key, value in vars(type(self)).items() if filter_items(key, value)}
 
@@ -49,6 +49,6 @@ class BaseConfig():
             raise TypeError("Only str supported")
         return self._config[key]
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(config={self.raw_config})"
