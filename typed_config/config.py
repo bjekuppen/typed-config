@@ -1,13 +1,27 @@
-from typing import Any
+from typing import Any, Type
 from .exceptions import RequiredError
 from .setting import Setting, SettingGroup, SettingList
 
+import json
+import yaml #type: ignore[import-untyped]
 
 class BaseConfig():
     
     def __init__(self, config:dict[str, Any]) -> None:
         self.raw_config = config
         self.__load_config()
+
+    @classmethod
+    def load_json(cls, file_path:str) -> Type["BaseConfig"]:
+        with open(file_path, 'r') as f:
+            raw_config = json.load(f)
+        return cls(raw_config) #type: ignore[return-value]
+
+    @classmethod
+    def load_yaml(cls, file_path:str)  -> Type["BaseConfig"]:
+        with open(file_path, 'r') as f:
+            raw_config = yaml.safe_load(f)
+        return cls(raw_config) #type: ignore[return-value]
 
     def __load_config(self) -> None:
         self._config: dict[str, Any] = {}
