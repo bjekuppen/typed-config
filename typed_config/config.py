@@ -1,5 +1,5 @@
 from typing import Any, Type
-from .exceptions import RequiredError
+from .exceptions import RequiredError, UndefinedKeyError
 from .setting import Setting, SettingGroup, SettingList
 
 import json
@@ -9,6 +9,7 @@ class BaseConfig():
     
     def __init__(self, config:dict[str, Any]) -> None:
         self.raw_config = config
+        self.__check_undefined_keys()
         self.__load_config()
 
     @classmethod
@@ -23,10 +24,19 @@ class BaseConfig():
             raw_config = yaml.safe_load(f)
         return cls(raw_config) #type: ignore[return-value]
 
+    def __check_undefined_keys(self) -> bool:
+        config_keys = self.__get_config_keys()
+        for key in self.raw_config.keys():
+            if key in config_keys:
+                pass
+            else:
+                raise UndefinedKeyError(f"{key} is invalid.")
+        return True
+
     def __load_config(self) -> None:
         self._config: dict[str, Any] = {}
 
-        class_variables = self.__get_class_variables()
+        class_variables = self.__get_config_keys()
         for variable_name, value in class_variables.items():
             try:
                 user_input = self.raw_config[variable_name]
@@ -52,7 +62,7 @@ class BaseConfig():
                     if type(value.setting) == SettingGroup:
                         self._config[variable_name].append(value.setting.config(item)) #type: ignore[operator]
 
-    def __get_class_variables(self) -> dict[str, Any]:
+    def __get_config_keys(self) -> dict[str, Any]:
         def filter_items(key:str, value:Any) -> bool:
             return isinstance(value, (Setting, SettingGroup, SettingList))
         return {key: value for key, value in vars(type(self)).items() if filter_items(key, value)}
