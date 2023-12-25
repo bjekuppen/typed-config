@@ -76,3 +76,6 @@ class BaseConfig():
     def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(config={self.raw_config})"
+
+    def __eq__(self, other: Type["BaseConfig"]) -> bool: #type: ignore[override]
+        return self._config == other._config

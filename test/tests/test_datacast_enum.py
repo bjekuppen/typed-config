@@ -45,3 +45,16 @@ def test_str_enum_1(ConfigStrEnumTest):
     raw_config = {"key1":"b"}
     cfg = ConfigStrEnumTest(raw_config)
     assert cfg["key1"] == StrEnumTest.b
+
+def test_enum_config_eq(ConfigEnumTest):
+    raw_config = {"key1":1}
+    cfg = ConfigEnumTest(raw_config)
+    cfg2 = ConfigEnumTest(raw_config)
+    assert cfg == cfg2
+
+def test_enum_config_not_eq(ConfigEnumTest):
+    raw_config = {"key1":1}
+    raw_config2 = {"key1":2}
+    cfg = ConfigEnumTest(raw_config)
+    cfg2 = ConfigEnumTest(raw_config2)
+    assert not cfg == cfg2
