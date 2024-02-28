@@ -67,6 +67,8 @@ class BaseConfig():
             return isinstance(value, (Setting, SettingGroup, SettingList))
         return {key: value for key, value in vars(type(self)).items() if filter_items(key, value)}
 
+    def keys(self):
+        return self._config.keys()
 
     def __getitem__(self, key:str) -> Any:
         if type(key) != str:
