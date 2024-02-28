@@ -6,7 +6,7 @@ from .setting import Setting, SettingGroup, SettingList
 class BaseConfig():
     
     def __init__(self, config:dict[str, Any]) -> None:
-        self.raw_config = config
+        self._raw_config = config
         self.__load_config()
 
     def __load_config(self) -> None:
@@ -15,7 +15,7 @@ class BaseConfig():
         class_variables = self.__get_class_variables()
         for variable_name, value in class_variables.items():
             try:
-                user_input = self.raw_config[variable_name]
+                user_input = self._raw_config[variable_name]
             except KeyError:
                 if type(value) == SettingList:
                     if value.setting.required:
@@ -51,4 +51,15 @@ class BaseConfig():
     
     def __repr__(self):
         class_name = type(self).__name__
-        return f"{class_name}(config={self.raw_config})"
+        return f"{class_name}(config={self._raw_config})"
+    
+    def __getattribute__(self, name):
+        if name != '_config':
+            try:
+                value = self._config[name]
+            except (KeyError, AttributeError):
+                return object.__getattribute__(self, name)
+            else:
+                return value
+        else:
+            return object.__getattribute__(self, name)
