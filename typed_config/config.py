@@ -77,7 +77,7 @@ class BaseConfig():
         class_name = type(self).__name__
         return f"{class_name}(config={self._raw_config})"
     
-    def __getattribute__(self, name):
+    def __getattribute__(self, name:str) -> Any:
         if name != '_config':
             try:
                 value = self._config[name]
