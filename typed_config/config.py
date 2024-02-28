@@ -26,7 +26,7 @@ class BaseConfig():
 
     def __check_undefined_keys(self) -> bool:
         config_keys = self.__get_config_keys()
-        for key in self.raw_config.keys():
+        for key in self._raw_config.keys():
             if key in config_keys:
                 pass
             else:
