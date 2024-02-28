@@ -1,18 +1,42 @@
-from typing import Any
-from .exceptions import RequiredError
+from typing import Any, Type
+from .exceptions import RequiredError, UndefinedKeyError
 from .setting import Setting, SettingGroup, SettingList
 
+import json
+import yaml #type: ignore[import-untyped]
 
 class BaseConfig():
     
     def __init__(self, config:dict[str, Any]) -> None:
         self._raw_config = config
+        self.__check_undefined_keys()
         self.__load_config()
+
+    @classmethod
+    def load_json(cls, file_path:str) -> Type["BaseConfig"]:
+        with open(file_path, 'r') as f:
+            raw_config = json.load(f)
+        return cls(raw_config) #type: ignore[return-value]
+
+    @classmethod
+    def load_yaml(cls, file_path:str)  -> Type["BaseConfig"]:
+        with open(file_path, 'r') as f:
+            raw_config = yaml.safe_load(f)
+        return cls(raw_config) #type: ignore[return-value]
+
+    def __check_undefined_keys(self) -> bool:
+        config_keys = self.__get_config_keys()
+        for key in self.raw_config.keys():
+            if key in config_keys:
+                pass
+            else:
+                raise UndefinedKeyError(f"{key} is invalid.")
+        return True
 
     def __load_config(self) -> None:
         self._config: dict[str, Any] = {}
 
-        class_variables = self.__get_class_variables()
+        class_variables = self.__get_config_keys()
         for variable_name, value in class_variables.items():
             try:
                 user_input = self._raw_config[variable_name]
@@ -38,8 +62,8 @@ class BaseConfig():
                     if type(value.setting) == SettingGroup:
                         self._config[variable_name].append(value.setting.config(item)) #type: ignore[operator]
 
-    def __get_class_variables(self) -> dict[str, Any]:
-        def filter_items(key, value):
+    def __get_config_keys(self) -> dict[str, Any]:
+        def filter_items(key:str, value:Any) -> bool:
             return isinstance(value, (Setting, SettingGroup, SettingList))
         return {key: value for key, value in vars(type(self)).items() if filter_items(key, value)}
 
@@ -49,7 +73,7 @@ class BaseConfig():
             raise TypeError("Only str supported")
         return self._config[key]
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(config={self._raw_config})"
     
@@ -63,3 +87,6 @@ class BaseConfig():
                 return value
         else:
             return object.__getattribute__(self, name)
+
+    def __eq__(self, other: Type["BaseConfig"]) -> bool: #type: ignore[override]
+        return self._config == other._config

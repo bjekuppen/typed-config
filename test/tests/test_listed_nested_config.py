@@ -162,3 +162,49 @@ def test_nested_listed_config_required_2(Config):
                 }
     with pytest.raises(RequiredError):
         cfg = Config(raw_config)
+
+def test_nested_lister_config_eq(Config):
+    raw_config = {
+                    "key1":{
+                        "key1":[
+                                {
+                                "key1":["1", "2"],
+                                },
+                                {
+                                "key1":["6", "7"],
+                                }
+                                ]
+                    }, 
+                }
+    cfg = Config(raw_config)
+    cfg2 = Config(raw_config)
+    assert cfg == cfg2
+
+def test_nested_lister_config_not_eq(Config):
+    raw_config = {
+                    "key1":{
+                        "key1":[
+                                {
+                                "key1":["1", "2"],
+                                },
+                                {
+                                "key1":["6", "7"],
+                                }
+                                ]
+                    }, 
+                }
+    raw_config2 = {
+                    "key1":{
+                        "key1":[
+                                {
+                                "key1":["2", "2"],
+                                },
+                                {
+                                "key1":["6", "7"],
+                                }
+                                ]
+                    }, 
+                }
+    cfg = Config(raw_config)
+    cfg2 = Config(raw_config2)
+    assert not cfg == cfg2

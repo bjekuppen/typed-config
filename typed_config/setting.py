@@ -8,7 +8,7 @@ class Setting():
         self.datacast = datacast
         self.required = required
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(datacast={self.datacast}, required={self.required})"
 
@@ -17,7 +17,7 @@ class SettingGroup():
         self.config = config
         self.required = required
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(config={self.config}, required={self.required})"
     
@@ -25,6 +25,6 @@ class SettingList():
     def __init__(self, setting:Union[Setting, SettingGroup]): 
         self.setting = setting
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         class_name = type(self).__name__
         return f"{class_name}(setting={self.setting})"

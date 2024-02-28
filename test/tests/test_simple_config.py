@@ -1,5 +1,5 @@
 from typed_config import BaseConfig, Setting
-from typed_config.exceptions import RequiredError
+from typed_config.exceptions import RequiredError, UndefinedKeyError
 import pytest
 
 @pytest.fixture
@@ -42,3 +42,8 @@ def test_simple_get_item_invalid_type(SimpleConfig):
     cfg = SimpleConfig(raw_config)
     with pytest.raises(TypeError):
         cfg[1]
+
+def test_simple_get_invalid_key(SimpleConfig):
+    raw_config = {"key1":"1", "key2":"2", "key3":"3"}
+    with pytest.raises(UndefinedKeyError):
+        cfg = SimpleConfig(raw_config)
